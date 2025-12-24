@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เมนู by เชฟAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+        color: #667eea;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2.5em;
+    }
+
+    .score-display {
+        text-align: center;
+        font-size: 1.5em;
+        color: #764ba2;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 10px;
+    }
+
+    .screen {
+        display: none;
+    }
+
+    .screen.active {
+        display: block;
+        animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.1em;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+    }
+
+    .btn-success {
+        background: #28a745;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+    }
+
+    .question-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+    }
+
+    .question-text {
+        font-size: 1.3em;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .choice-btn {
+        background: white;
+        color: #333;
+        border: 2px solid #667eea;
+        margin: 8px 0;
+        text-align: left;
+    }
+
+    .choice-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .input-group {
+        margin: 20px 0;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1em;
+        margin-bottom: 15px;
+    }
+
+    .result-box {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        padding: 25px;
+        border-radius: 15px;
+        margin: 20px 0;
+    }
+
+    .food-name {
+        font-size: 2em;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .score-badge {
+        background: #fff;
+        color: #667eea;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 1.5em;
+        margin: 15px 0;
+        font-weight: bold;
+    }
+
+    .reason-text {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        line-height: 1.6;
+    }
+
+    .checkbox-label {
+        display: block;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+    .checkbox-label input {
+        width: auto;
+        margin-right: 10px;
+    }
+
+    .home-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: 2px solid #667eea;
+        cursor: pointer;
+        font-weight: bold;
+        z-index: 1000;
+    }
+
+    .home-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+</style>
+```
+
+</head>
+<body>
+    <button class="home-btn" onclick="goHome()">🏠 หน้าแรก</button>
+
+```
+<div class="container">
+    <h1>🍳 เมนู by เชฟAI</h1>
+    <div class="score-display">
+        🏆 แต้มสะสม: <span id="totalScore">0</span> คะแนน
+        <div style="font-size: 0.9em; margin-top: 5px; color: #999;">
+            (ใช้ 5 แต้มในการถามเชฟ AI แต่ละครั้ง)
+        </div>
+    </div>
+
+    <!-- หน้าแรก -->
+    <div id="homeScreen" class="screen active">
+        <h2 style="text-align: center; margin-bottom: 30px;">เลือกโหมดเกม</h2>
+        <button class="btn" onclick="startQuiz()">🎮 เล่นมินิเกมตอบคำถาม</button>
+        <button class="btn" onclick="checkAndStartAI()" id="aiBtn">🍱 ถามเชฟ AI ว่ากลางวันนี้จะกินอะไรดี (ใช้ 5 แต้ม)</button>
+        <div id="pointWarning" style="display: none; text-align: center; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 10px; color: #856404;">
+            ⚠️ คุณมีแต้มไม่เพียงพอ! เล่นมินิเกมเพื่อสะสมแต้มก่อนนะ
+        </div>
+    </div>
+
+    <!-- หน้ามินิเกม -->
+    <div id="quizScreen" class="screen">
+        <h2 style="text-align: center; margin-bottom: 20px;">มินิเกมตอบคำถาม</h2>
+        <div class="question-box">
+            <div class="question-text" id="questionText"></div>
+            <div id="choicesContainer"></div>
+        </div>
+        <div id="quizResult" style="display: none; text-align: center; padding: 20px;"></div>
+        <button class="btn btn-secondary" onclick="nextQuestion()" id="nextBtn" style="display: none;">❯ คำถามถัดไป</button>
+    </div>
+
+    <!-- หน้า AI ถามข้อมูล -->
+    <div id="aiInputScreen" class="screen">
+        <h2 style="text-align: center; margin-bottom: 20px;">AI อยากรู้ความชอบของคุณ</h2>
+        
+        <div class="input-group">
+            <label>🚫 คุณแพ้อาหารอะไรบ้าง?</label>
+            <input type="text" id="allergies" placeholder="เช่น กุ้ง, ปู, หมึก, ถั่ว, นม (คั่นด้วยจุลภาค)">
+            <label class="checkbox-label">
+                <input type="checkbox" id="noAllergy" onchange="toggleAllergyInput()">
+                ไม่แพ้อาหารใดเลย
+            </label>
+        </div>
+
+        <div class="input-group">
+            <label>😋 รสชาติที่ชอบ</label>
+            <select id="taste">
+                <option value="เผ็ด">เผ็ด 🌶️</option>
+                <option value="หวาน">หวาน 🍯</option>
+                <option value="เค็ม">เค็ม 🧂</option>
+                <option value="เปรี้ยว">เปรี้ยว 🍋</option>
+                <option value="จืด">จืด 🥗</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>🍽️ ประเภทอาหาร</label>
+            <select id="foodType">
+                <option value="ไทย">อาหารไทย 🇹🇭</option>
+                <option value="ญี่ปุ่น">อาหารญี่ปุ่น 🇯🇵</option>
+                <option value="จีน">อาหารจีน 🇨🇳</option>
+                <option value="ฝรั่ง">อาหารฝรั่ง 🍕</option>
+                <option value="อื่นๆ">อื่นๆ ✨</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>💰 งบประมาณ (บาท)</label>
+            <select id="budget">
+                <option value="50">น้อยกว่า 50 บาท</option>
+                <option value="100">50-100 บาท</option>
+                <option value="200">100-200 บาท</option>
+                <option value="300">มากกว่า 200 บาท</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>⏰ เวลาที่มี</label>
+            <select id="timeAvailable">
+                <option value="น้อย">รีบมาก (10-15 นาที)</option>
+                <option value="ปานกลาง">ปานกลาง (15-30 นาที)</option>
+                <option value="มาก">เยอะ (มากกว่า 30 นาที)</option>
+            </select>
+        </div>
+
+        <button class="btn btn-success" onclick="getAIRecommendation()">✨ ให้ AI แนะนำเลย!</button>
+    </div>
+
+    <!-- หน้าผลลัพธ์ AI -->
+    <div id="aiResultScreen" class="screen">
+        <h2 style="text-align: center; margin-bottom: 20px;">AI แนะนำให้คุณ</h2>
+        <div class="result-box">
+            <div class="food-name" id="recommendedFood"></div>
+            <div class="score-badge">
+                🎯 คะแนนความเหมาะสม: <span id="foodScore"></span>/100
+            </div>
+            <div class="reason-text" id="aiReason"></div>
+        </div>
+        <button class="btn" onclick="startAI()">🔄 ลองใหม่อีกครั้ง</button>
+    </div>
+</div>
+
+<script>
+    // ข้อมูลเกม
+    let totalScore = 0; // แต้มสะสมของผู้เล่น
+
+    // คลังคำถามมินิเกม
+    const questions = [
+        {
+            question: "AI ย่อมาจากอะไร?",
+            choices: ["Artificial Intelligence", "Advanced Information", "Automatic Input", "Applied Innovation"],
+            correct: 0
+        },
+        {
+            question: "Machine Learning คืออะไร?",
+            choices: ["การเรียนรู้ด้วยตัวเอง", "การเรียนรู้ของเครื่องจักร", "การสอนเครื่องให้เรียนรู้จากข้อมูล", "การเรียนออนไลน์"],
+            correct: 2
+        },
+        {
+            question: "Neural Network ได้แรงบันดาลใจมาจากอะไร?",
+            choices: ["คอมพิวเตอร์", "สมองมนุษย์", "อินเทอร์เน็ต", "โทรศัพท์"],
+            correct: 1
+        },
+        {
+            question: "ChatGPT เป็น AI ประเภทใด?",
+            choices: ["Computer Vision", "Natural Language Processing", "Robotics", "Expert System"],
+            correct: 1
+        },
+        {
+            question: "Deep Learning ใช้โครงสร้างแบบใด?",
+            choices: ["Tree", "Graph", "Neural Network หลายชั้น", "Linear"],
+            correct: 2
+        },
+        {
+            question: "Big Data มีความสำคัญต่อ AI อย่างไร?",
+            choices: ["ไม่มีความสำคัญ", "ช่วยให้ AI เรียนรู้และพัฒนาได้ดีขึ้น", "ทำให้ AI ช้าลง", "ใช้แทน AI"],
+            correct: 1
+        },
+        {
+            question: "Supervised Learning คืออะไร?",
+            choices: ["เรียนรู้โดยไม่มีคำตอบ", "เรียนรู้จากข้อมูลที่มีคำตอบอยู่แล้ว", "เรียนรู้จากการลองผิดลองถูก", "เรียนรู้จากครู"],
+            correct: 1
+        },
+        {
+            question: "Computer Vision ใช้ทำอะไร?",
+            choices: ["แปลภาษา", "จดจำเสียง", "วิเคราะห์รูปภาพและวิดีโอ", "เล่นเกม"],
+            correct: 2
+        },
+        {
+            question: "Algorithm คืออะไร?",
+            choices: ["โปรแกรม", "ขั้นตอนการทำงาน", "ภาษาคอมพิวเตอร์", "ฮาร์ดแวร์"],
+            correct: 1
+        },
+        {
+            question: "Overfitting ในการเทรน AI คืออะไร?",
+            choices: ["เทรนได้ดีมาก", "เทรนน้อยเกินไป", "จำข้อมูลเทรนมากเกินไปจนใช้กับข้อมูลใหม่ไม่ได้", "เทรนเร็วเกินไป"],
+            correct: 2
+        }
+    ];
+
+    let currentQuestion = null;
+    let correctAnswer = -1;
+
+    // ฐานข้อมูลเมนูอาหาร (พร้อมวัตถุดิบและข้อมูลต่างๆ)
+    const foodDatabase = [
+        {
+            name: "ผัดไทย",
+            type: "ไทย",
+            taste: ["เปรี้ยว", "หวาน"],
+            ingredients: ["กุ้ง", "เส้นจันทร์", "ถั่วงอก", "ไข่"],
+            price: 50,
+            prepTime: "น้อย"
+        },
+        {
+            name: "ส้มตำ",
+            type: "ไทย",
+            taste: ["เผ็ด", "เปรี้ยว"],
+            ingredients: ["มะละกอ", "ปู", "กุ้ง", "มะเขือเทศ"],
+            price: 40,
+            prepTime: "น้อย"
+        },
+        {
+            name: "ข้าวผัด",
+            type: "ไทย",
+            taste: ["เค็ม"],
+            ingredients: ["ข้าว", "ไข่", "ผัก"],
+            price: 45,
+            prepTime: "น้อย"
+        },
+        {
+            name: "ราเมง",
+            type: "ญี่ปุ่น",
+            taste: ["เค็ม"],
+            ingredients: ["เส้นราเมง", "หมู", "ไข่", "ผัก"],
+            price: 120,
+            prepTime: "ปานกลาง"
+        },
+        {
+            name: "ซูชิ",
+            type: "ญี่ปุ่น",
+            taste: ["จืด", "เค็ม"],
+            ingredients: ["ปลาดิบ", "ข้าว", "สาหร่าย"],
+            price: 150,
+            prepTime: "มาก"
+        },
+        {
+            name: "ข้าวหมูแดง",
+            type: "จีน",
+            taste: ["หวาน", "เค็ม"],
+            ingredients: ["หมู", "ข้าว", "ไข่"],
+            price: 50,
+            prepTime: "น้อย"
+        },
+        {
+            name: "ก๋วยเตี๋ยว",
+            type: "ไทย",
+            taste: ["เค็ม"],
+            ingredients: ["เส้นก๋วยเตี๋ยว", "หมู", "ลูกชิ้น"],
+            price: 45,
+            prepTime: "น้อย"
+        },
+        {
+            name: "พิซซ่า",
+            type: "ฝรั่ง",
+            taste: ["เค็ม"],
+            ingredients: ["แป้ง", "ชีส", "ซอสมะเขือเทศ"],
+            price: 200,
+            prepTime: "มาก"
+        },
+        {
+            name: "สลัด",
+            type: "ฝรั่ง",
+            taste: ["จืด"],
+            ingredients: ["ผักสด", "มะเขือเทศ", "น้ำสลัด"],
+            price: 80,
+            prepTime: "น้อย"
+        },
+        {
+            name: "ข้าวมันไก่",
+            type: "อื่นๆ",
+            taste: ["จืด", "เค็ม"],
+            ingredients: ["ไก่", "ข้าว", "ซอส"],
+            price: 50,
+            prepTime: "น้อย"
+        },
+        {
+            name: "แกงเขียวหวาน",
+            type: "ไทย",
+            taste: ["เผ็ด", "หวาน"],
+            ingredients: ["กะทิ", "ไก่", "มะเขือ", "พริก"],
+            price: 60,
+            prepTime: "ปานกลาง"
+        },
+        {
+            name: "ข้าวกะเพรา",
+            type: "ไทย",
+            taste: ["เผ็ด", "เค็ม"],
+            ingredients: ["กะเพรา", "หมู", "พริก", "ไข่ดาว"],
+            price: 50,
+            prepTime: "น้อย"
+        }
+    ];
+
+    // ฟังก์ชันกลับหน้าแรก
+    function goHome() {
+        showScreen('homeScreen');
+    }
+
+    // ฟังก์ชันแสดงหน้าจอ
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    // ฟังก์ชันอัพเดทคะแนน
+    function updateScore() {
+        document.getElementById('totalScore').textContent = totalScore;
+    }
+
+    // === ส่วนมินิเกม ===
+    function startQuiz() {
+        showScreen('quizScreen');
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        // สุ่มคำถาม
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        currentQuestion = questions[randomIndex];
+        
+        // สุ่มลำดับตัวเลือก
+        const shuffledChoices = [...currentQuestion.choices];
+        const correctChoice = currentQuestion.choices[currentQuestion.correct];
+        
+        // ใช้ Fisher-Yates shuffle
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledChoices[i], shuffledChoices[j]] = [shuffledChoices[j], shuffledChoices[i]];
+        }
+        
+        // หาตำแหน่งใหม่ของคำตอบที่ถูก
+        correctAnswer = shuffledChoices.indexOf(correctChoice);
+        
+        // แสดงคำถาม
+        document.getElementById('questionText').textContent = currentQuestion.question;
+        
+        // แสดงตัวเลือก
+        const choicesContainer = document.getElementById('choicesContainer');
+        choicesContainer.innerHTML = '';
+        shuffledChoices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn choice-btn';
+            btn.textContent = choice;
+            btn.onclick = () => checkAnswer(index);
+            choicesContainer.appendChild(btn);
+        });
+        
+        // ซ่อนผลลัพธ์และปุ่มถัดไป
+        document.getElementById('quizResult').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function checkAnswer(selected) {
+        const resultDiv = document.getElementById('quizResult');
+        const choiceBtns = document.querySelectorAll('.choice-btn');
+        
+        // ปิดการใช้งานปุ่มทั้งหมด
+        choiceBtns.forEach(btn => btn.disabled = true);
+        
+        if (selected === correctAnswer) {
+            totalScore += 10;
+            updateScore();
+            resultDiv.innerHTML = '<h2 style="color: #28a745;">✅ ถูกต้อง! +10 คะแนน</h2>';
+            resultDiv.style.background = '#d4edda';
+        } else {
+            resultDiv.innerHTML = '<h2 style="color: #dc3545;">❌ ผิดนะ ลองใหม่ครั้งหน้า!</h2>';
+            resultDiv.style.background = '#f8d7da';
+        }
+        
+        resultDiv.style.display = 'block';
+        resultDiv.style.padding = '20px';
+        resultDiv.style.borderRadius = '10px';
+        resultDiv.style.marginTop = '20px';
+        
+        document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    // === ส่วน AI แนะนำอาหาร ===
+    function checkAndStartAI() {
+        // ตรวจสอบว่ามีแต้มพอหรือไม่
+        if (totalScore < 5) {
+            // แสดงข้อความเตือน
+            document.getElementById('pointWarning').style.display = 'block';
+            // ซ่อนข้อความหลัง 3 วินาที
+            setTimeout(() => {
+                document.getElementById('pointWarning').style.display = 'none';
+            }, 3000);
+            return;
+        }
+        
+        // ถ้ามีแต้มพอ หักแต้มและไปหน้าถามคำถาม
+        totalScore -= 5;
+        updateScore();
+        startAI();
+        
+        // แสดงข้อความแจ้งเตือนว่าหักแต้มแล้ว
+        alert('✨ หักแต้ม 5 คะแนนแล้ว! เชฟ AI พร้อมแนะนำเมนูให้คุณ');
+    }
+
+    function startAI() {
+        showScreen('aiInputScreen');
+        // รีเซ็ตฟอร์ม
+        document.getElementById('allergies').value = '';
+        document.getElementById('noAllergy').checked = false;
+        document.getElementById('allergies').disabled = false;
+    }
+
+    function toggleAllergyInput() {
+        const allergyInput = document.getElementById('allergies');
+        const noAllergyCheck = document.getElementById('noAllergy');
+        allergyInput.disabled = noAllergyCheck.checked;
+        if (noAllergyCheck.checked) {
+            allergyInput.value = '';
+        }
+    }
+
+    function getAIRecommendation() {
+        // รับข้อมูลจากผู้ใช้
+        const noAllergy = document.getElementById('noAllergy').checked;
+        const allergiesInput = document.getElementById('allergies').value.toLowerCase();
+        const allergies = noAllergy ? [] : allergiesInput.split(',').map(a => a.trim());
+        const taste = document.getElementById('taste').value;
+        const foodType = document.getElementById('foodType').value;
+        const budget = parseInt(document.getElementById('budget').value);
+        const timeAvailable = document.getElementById('timeAvailable').value;
+
+        // === ขั้นตอน AI: กรองและให้คะแนน ===
+        let candidates = [];
+
+        for (let food of foodDatabase) {
+            let score = 0;
+            let reasons = [];
+            let isSafe = true;
+
+            // 1. ตรวจสอบอาหารแพ้ (สำคัญที่สุด!)
+            if (!noAllergy && allergies.length > 0) {
+                for (let allergy of allergies) {
+                    for (let ingredient of food.ingredients) {
+                        if (ingredient.toLowerCase().includes(allergy) || allergy.includes(ingredient.toLowerCase())) {
+                            isSafe = false;
+                            break;
+                        }
+                    }
+                    if (!isSafe) break;
+                }
+            }
+
+            // ถ้ามีอาหารแพ้ ข้ามเมนูนี้เลย
+            if (!isSafe) continue;
+
+            reasons.push("✅ ไม่มีวัตถุดิบที่คุณแพ้");
+            score += 30;
+
+            // 2. ตรวจสอบรสชาติ
+            if (food.taste.includes(taste)) {
+                score += 25;
+                reasons.push(`✅ ตรงกับรสชาติที่ชอบ (${taste})`);
+            } else {
+                reasons.push(`⚠️ รสชาติไม่ตรงกับความชอบ`);
+            }
+
+            // 3. ตรวจสอบประเภทอาหาร
+            if (food.type === foodType) {
+                score += 20;
+                reasons.push(`✅ เป็นอาหาร${foodType}ตามที่ต้องการ`);
+            }
+
+            // 4. ตรวจสอบงบประมาณ
+            if (food.price <= budget) {
+                score += 15;
+                reasons.push(`✅ ราคา ${food.price} บาท อยู่ในงบ`);
+            } else {
+                score -= 10;
+                reasons.push(`⚠️ ราคา ${food.price} บาท เกินงบเล็กน้อย`);
+            }
+
+            // 5. ตรวจสอบเวลา
+            if (food.prepTime === timeAvailable) {
+                score += 10;
+                reasons.push(`✅ เวลาเตรียม${food.prepTime}เหมาะกับที่คุณมี`);
+            }
+
+            candidates.push({
+                food: food,
+                score: Math.max(0, Math.min(100, score)),
+                reasons: reasons
+            });
+        }
+
+        // เรียงลำดับตามคะแนน
+        candidates.sort((a, b) => b.score - a.score);
+
+        // แสดงผลลัพธ์
+        if (candidates.length > 0) {
+            const best = candidates[0];
+            document.getElementById('recommendedFood').textContent = `🍽️ ${best.food.name}`;
+            document.getElementById('foodScore').textContent = best.score;
+            
+            let reasonHTML = '<h3>💭 เหตุผลในการตัดสินใจ:</h3><ul style="text-align: left; line-height: 2;">';
+            best.reasons.forEach(reason => {
+                reasonHTML += `<li>${reason}</li>`;
+            });
+            reasonHTML += '</ul>';
+            
+            document.getElementById('aiReason').innerHTML = reasonHTML;
+        } else {
+            // กรณีไม่มีเมนูที่ปลอดภัย
+            document.getElementById('recommendedFood').textContent = '⚠️ ไม่พบเมนูที่เหมาะสม';
+            document.getElementById('foodScore').textContent = '0';
+            document.getElementById('aiReason').innerHTML = 
+                '<p>ขออภัยค่ะ ไม่พบเมนูที่ปลอดภัยสำหรับคุณในฐานข้อมูล กรุณาลองปรับเกณฑ์ใหม่หรือปรึกษาผู้เชี่ยวชาญด้านโภชนาการค่ะ</p>';
+        }
+
+        showScreen('aiResultScreen');
+    }
+
+    // เริ่มต้น
+    updateScore();
+</script>
+```
+
+</body>
+</html>
